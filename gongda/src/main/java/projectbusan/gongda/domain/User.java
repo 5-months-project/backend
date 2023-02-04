@@ -1,4 +1,4 @@
-package domain;
+package projectbusan.gongda.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,8 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Set;
 
 @Entity
@@ -24,7 +26,7 @@ public class User {
     private Long id;
 
     @Column(name = "user_email", length = 127, unique = true)
-    private String email;
+    private String username;
 
     @Column(name = "user_nickname", length = 255)
     private String nickname;
@@ -44,7 +46,10 @@ public class User {
     @ManyToMany
     @JoinTable(
             name = "user_authority",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "user_id")},
+            joinColumns = {@JoinColumn(name = "user_idx", referencedColumnName = "user_idx")},
             inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
     private Set<Authority> authorities;
+
+    public User(String subject, String s, Collection<? extends GrantedAuthority> authorities) {
+    }
 }
