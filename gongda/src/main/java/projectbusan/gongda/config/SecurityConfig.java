@@ -46,6 +46,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf().disable()
+                .formLogin().disable()
+                .httpBasic().disable()
 
                 .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
 
@@ -59,7 +61,7 @@ public class SecurityConfig {
 
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/auth/authenticate", "/api/signup").permitAll()
+                .requestMatchers("/api/authenticate", "/api/signup").permitAll()
                 .anyRequest().authenticated()
 
                 .and()
