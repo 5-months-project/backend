@@ -1,6 +1,6 @@
 package projectbusan.gongda.service;
 
-import projectbusan.gongda.domain.User;
+import projectbusan.gongda.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

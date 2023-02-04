@@ -1,6 +1,6 @@
 package projectbusan.gongda.jwt;
 
-import projectbusan.gongda.domain.User;
+import projectbusan.gongda.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

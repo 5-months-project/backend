@@ -1,6 +1,6 @@
 package projectbusan.gongda.repository;
 
-import projectbusan.gongda.domain.User;
+import projectbusan.gongda.entity.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 

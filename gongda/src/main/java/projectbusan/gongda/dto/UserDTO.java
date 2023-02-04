@@ -1,7 +1,7 @@
 package projectbusan.gongda.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import projectbusan.gongda.domain.User;
+import projectbusan.gongda.entity.User;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;

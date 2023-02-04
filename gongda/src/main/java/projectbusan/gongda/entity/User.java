@@ -1,4 +1,4 @@
-package projectbusan.gongda.domain;
+package projectbusan.gongda.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDateTime;
@@ -19,28 +20,22 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User extends BaseTimeStamp {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_idx")
     private Long id;
 
-    @Column(name = "user_email", length = 127, unique = true)
+    @Column(name = "user_email", length = 127, unique = true, nullable = false)
     private String username;
 
     @Column(name = "user_nickname", length = 255)
     private String nickname;
 
-    @Column(name = "user_password", length = 255)
+    @Column(name = "user_password", length = 255, nullable = false)
     private String password;
 
-    @Column(name = "user_created_at") @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column(name = "user_updated_at") @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-    @Column(name = "user_activated")
+    @Column(name = "user_activated", nullable = false)
     private boolean activated;
 
     @ManyToMany

@@ -1,4 +1,4 @@
-package projectbusan.gongda.domain;
+package projectbusan.gongda.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

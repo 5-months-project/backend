@@ -1,7 +1,7 @@
 package projectbusan.gongda.service;
 
-import projectbusan.gongda.domain.Authority;
-import projectbusan.gongda.domain.User;
+import projectbusan.gongda.entity.Authority;
+import projectbusan.gongda.entity.User;
 import projectbusan.gongda.dto.UserDTO;
 import projectbusan.gongda.exception.DuplicateMemberException;
 import projectbusan.gongda.exception.NotFoundMemberException;
