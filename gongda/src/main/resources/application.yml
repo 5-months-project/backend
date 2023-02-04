@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:mariadb://think2022.iptime.org:33060/gongda
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: root
+    password: 1234qwer
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      format_sql: true
+      show_sql: true
+
+jwt:
+  header: Authorization
+  secret: d066bb56777ecb263e3f934c0a91fffef017559bcc7e249060ecddb2f8ee66c013f7fd1b1e5b099495a494ccea1b44e553fb2945441f420e82c65f1ace892f18
+  token-validity-in-seconds: 86400
