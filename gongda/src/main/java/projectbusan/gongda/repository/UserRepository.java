@@ -1,5 +1,6 @@
 package projectbusan.gongda.repository;
 
+import org.springframework.stereotype.Repository;
 import projectbusan.gongda.entity.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
