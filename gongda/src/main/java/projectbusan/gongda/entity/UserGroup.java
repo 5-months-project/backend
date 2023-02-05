@@ -15,10 +15,10 @@ public class UserGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//머지작업후 주석해제예정
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name="user_id")
-//    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "group_id")
@@ -26,6 +26,5 @@ public class UserGroup {
 
     @CreationTimestamp
     private LocalDateTime registrationDate;
-
 
 }

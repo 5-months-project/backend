@@ -3,11 +3,15 @@ package projectbusan.gongda.service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import projectbusan.gongda.dto.GroupDTO;
+import projectbusan.gongda.dto.GroupEnterDTO;
 import projectbusan.gongda.entity.Group;
+import projectbusan.gongda.exception.NotFoundGroupException;
+import projectbusan.gongda.exception.WrongGroupPasswordException;
 import projectbusan.gongda.repository.GroupRepository;
 
 
-
+import java.util.Optional;
 import java.util.Random;
 
 
@@ -26,12 +30,14 @@ public class GroupService {
     /*
             그룹생성
         */
-    public Group createGroup(Group group){
+    public GroupDTO createGroup(Group group){
         group.setCode(codeCreate());
         while (validDuplicateMember(group)){
             group.setCode(codeCreate());
         }
-        return group;
+        groupRepository.save(group);
+        return new GroupDTO(group.getName(), group.getCode());
+
 
     }
 
@@ -40,9 +46,7 @@ public class GroupService {
         코드중복조사
     */
     private boolean validDuplicateMember(Group group) {
-        if (groupRepository.findByCode(group.getCode()).isPresent()){
-            return true;
-        }
+        if (groupRepository.findByCode(group.getCode()).isPresent()) return true;
         else return false;
 
     }
@@ -69,6 +73,21 @@ public class GroupService {
         }
 
         return code.toString();
+    }
+
+    public Group findGroup(GroupEnterDTO groupEnterDto){
+        String code = groupEnterDto.getGroupCode();
+        String password = groupEnterDto.getGroupCode();
+        Optional<Group> opGroup =groupRepository.findByCode(code);
+        if (opGroup.isEmpty()){
+            throw new NotFoundGroupException("코드와 일치하는 그룹을 찾을 수 없습니다.");
+        }
+        Group group = groupRepository.findByCode(code).get();
+        //패스워드 암호화해야함
+        if (group.getPassword()!=password){
+            throw new WrongGroupPasswordException("그룹참여 패스워드가 틀렸습니다.");
+        }
+        return group;
     }
 
 
