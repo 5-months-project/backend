@@ -1,4 +1,4 @@
-package projectbusan.gongda.domain;
+package projectbusan.gongda.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -14,6 +14,7 @@ import java.util.List;
 @Table(name = "group_tbl")
 public class Group {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "group_idx")
     private Long id;
 
     @Column(length= 127,name= "group_name",nullable = false)
@@ -32,6 +33,9 @@ public class Group {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "group")
-    private List<UserGroupMapping> userGroupMappings = new ArrayList<>();
+    private List<UserGroup> userGroups = new ArrayList<>();
+
+
+
 
 }

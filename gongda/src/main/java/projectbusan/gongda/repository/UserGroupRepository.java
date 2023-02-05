@@ -8,12 +8,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface GroupRepository extends JpaRepository<Group,Long> {
+public interface UserGroupRepository extends JpaRepository<Group,Long> {
     Group save(Group member);
     Optional<Group> findById(Long id);
-    List<Group> findAll();
-    Optional<Group> findByCode(String code);
+
+
+    List<Group> findAllByUserId(Long userId);
+
     void deleteById(Long id);
+
 
 
 }
