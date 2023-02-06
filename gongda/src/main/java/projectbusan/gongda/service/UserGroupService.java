@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import projectbusan.gongda.dto.GroupDTO;
 import projectbusan.gongda.entity.Group;
 import projectbusan.gongda.entity.User;
+import projectbusan.gongda.entity.UserGroup;
 import projectbusan.gongda.repository.UserGroupRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Transactional
@@ -20,12 +22,20 @@ public class UserGroupService {
     }
 
     public List<Group> findGroups(User user){
-        return userGroupRepository.findAllByUser(user);
-
+        List<UserGroup> userGroupList = userGroupRepository.findAllByUser(user);
+        List<Group> groupList = new ArrayList<>();
+        for(UserGroup userGroup : userGroupList){
+            groupList.add(userGroup.getGroup());
+        }
+        return groupList;
     }
     public List<User> findMembers(Group group){
-         return userGroupRepository.findAllByGroup(group);
-
+         List<UserGroup> userGroupList = userGroupRepository.findAllByGroup(group);
+         List<User> userList = new ArrayList<>();
+         for(UserGroup userGroup : userGroupList){
+             userList.add(userGroup.getUser());
+         }
+         return userList;
     }
 
 
@@ -34,6 +44,10 @@ public class UserGroupService {
         return new GroupDTO(group.getName(), group.getCode());
 
 
+    }
+    public GroupDTO exitGroup(User user, Group group){
+        userGroupRepository.deleteByUserAndGroup(user,group);
+        return new GroupDTO(group.getName(), group.getCode());
     }
 
 

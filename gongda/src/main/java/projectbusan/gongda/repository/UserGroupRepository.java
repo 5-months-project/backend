@@ -11,12 +11,12 @@ import java.util.List;
 @Repository
 public interface UserGroupRepository extends JpaRepository<UserGroup,Long> {
     UserGroup save(User user,Group group);
-    List<User> findAllByGroup(Group group);
+    List<UserGroup> findAllByGroup(Group group);
 
 
-    List<Group> findAllByUser(User user);
+    List<UserGroup> findAllByUser(User user);
 
-    void deleteById(Long id);
+    void deleteByUserAndGroup(User user,Group group);
 
 
 

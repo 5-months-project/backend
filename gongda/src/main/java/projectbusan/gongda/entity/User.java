@@ -11,7 +11,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -38,6 +40,8 @@ public class User extends BaseTimeStamp {
     @Column(name = "user_activated", nullable = false)
     private boolean activated;
 
+    @OneToMany(mappedBy = "user")
+    private List<UserGroup> userGroups = new ArrayList<>();
     @ManyToMany
     @JoinTable(
             name = "user_authority",

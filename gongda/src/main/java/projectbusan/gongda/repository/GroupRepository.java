@@ -10,10 +10,8 @@ import java.util.Optional;
 @Repository
 public interface GroupRepository extends JpaRepository<Group,Long> {
     Group save(Group member);
-    Optional<Group> findById(Long id);
-    List<Group> findAll();
     Optional<Group> findByCode(String code);
-    void deleteById(Long id);
+
 
 
 }
