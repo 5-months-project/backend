@@ -12,7 +12,7 @@ import projectbusan.gongda.exception.NotFoundMemberException;
 import projectbusan.gongda.repository.GroupRepository;
 import projectbusan.gongda.repository.UserRepository;
 import projectbusan.gongda.service.GroupService;
-import projectbusan.gongda.service.UserGroupService;
+
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -25,16 +25,14 @@ public class GroupController {
     private final GroupService groupService;
 
     private final GroupRepository groupRepository;
-    private final UserGroupService userGroupService;
     private final UserRepository userRepository;
 
 
     //DI 수정필요
     @Autowired
-    public GroupController(GroupService groupService, GroupRepository groupRepository, UserGroupService userGroupService, UserRepository userRepository) {
+    public GroupController(GroupService groupService, GroupRepository groupRepository,  UserRepository userRepository) {
         this.groupService = groupService;
         this.groupRepository = groupRepository;
-        this.userGroupService =userGroupService;
         this.userRepository = userRepository;
     }
 
@@ -59,7 +57,7 @@ public class GroupController {
             throw new NotFoundMemberException("일치하는 유저가 없습니다.");
         }
         User user = userRepository.findOneWithAuthoritiesByUsername(userEmail).get();
-        List<Group> findGroups = userGroupService.findGroups(user);
+        List<Group> findGroups = groupService.findGroups(user); //유저엔티티로 그룹들찾아오기
         List<GroupDTO> groups = findGroups.stream()
                 .map(m-> new GroupDTO(m.getName(),m.getCode()))
                 .collect(Collectors.toList());
@@ -77,7 +75,7 @@ public class GroupController {
         }
         User user = opUser.get();
         Group group = groupService.findGroup(groupEnterDto);
-        return ResponseEntity.ok(userGroupService.enterGroup(user,group));
+        return ResponseEntity.ok(groupService.enterGroup(user,group));//유저-그룹추가
     }
 
     /*그룹의 멤버조회*/
@@ -90,7 +88,7 @@ public class GroupController {
             throw new NotFoundGroupException("코드와 일치하는 그룹을 찾을 수 없습니다.");
         }
         Group group = opGroup.get();
-        List<User> findMembers = userGroupService.findMembers(group);
+        List<User> findMembers = groupService.findMembers(group); //그룹엔티티로 유저리스트찾기
         List<UserInfoDTO> members = findMembers.stream()
                 .map(m-> new UserInfoDTO(m.getNickname(),m.getUsername()))
                 .collect(Collectors.toList());
@@ -113,7 +111,7 @@ public class GroupController {
             throw new NotFoundMemberException("일치하는 그룹을 찾을 수 없습니다.");
         }
         Group group= opGroup.get();
-        return ResponseEntity.ok(userGroupService.exitGroup(user,group));
+        return ResponseEntity.ok(groupService.exitGroup(user,group)); //유저-그룹 삭제
     }
 
 }

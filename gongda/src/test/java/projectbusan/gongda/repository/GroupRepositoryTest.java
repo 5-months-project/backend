@@ -1,22 +1,20 @@
-package projectbusan.gongda;
+package projectbusan.gongda.repository;
 
-import org.junit.jupiter.api.Assertions;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.FluentQuery;
+import org.springframework.boot.test.context.SpringBootTest;
 import projectbusan.gongda.entity.Group;
+import projectbusan.gongda.exception.NotFoundGroupException;
 import projectbusan.gongda.repository.GroupRepository;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
+
+import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 @DataJpaTest
+@Transactional
 public class GroupRepositoryTest {
 
     @Autowired
@@ -31,5 +29,18 @@ public class GroupRepositoryTest {
                 .code("testCode")
                 .build();
         Group savedGroup = groupRepository.save(group);
+    }
+
+
+    @Test
+    public void findByCodeTest(){
+        Group group = Group.builder()
+                .name("testName")
+                .password("testPwd")
+                .code("testCode")
+                .build();
+        groupRepository.save(group);
+        Optional<Group> opFoundGroup = groupRepository.findByCode("testCode");
+
     }
 }

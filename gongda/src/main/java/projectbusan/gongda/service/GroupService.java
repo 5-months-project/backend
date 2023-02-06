@@ -6,14 +6,16 @@ import org.springframework.stereotype.Service;
 import projectbusan.gongda.dto.GroupDTO;
 import projectbusan.gongda.dto.GroupEnterDTO;
 import projectbusan.gongda.entity.Group;
+import projectbusan.gongda.entity.User;
 import projectbusan.gongda.exception.NotFoundGroupException;
 import projectbusan.gongda.exception.WrongGroupPasswordException;
 import projectbusan.gongda.repository.GroupRepository;
 
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-
+import java.util.Set;
 
 
 @Transactional
@@ -30,6 +32,7 @@ public class GroupService {
     /*
             그룹생성
         */
+
     public GroupDTO createGroup(Group group){
         group.setCode(codeCreate());
         while (validDuplicateMember(group)){
@@ -88,6 +91,29 @@ public class GroupService {
             throw new WrongGroupPasswordException("그룹참여 패스워드가 틀렸습니다.");
         }
         return group;
+    }
+
+    @Transactional
+    public List<Group> findGroups(User user){
+        return user.getGroupList();
+    }
+
+    @Transactional
+    public List<User> findMembers(Group group){
+        return group.getUserList();
+    }
+
+    @Transactional
+    public GroupDTO enterGroup(User user, Group group){
+        user.addGroup(group);
+        return new GroupDTO(group.getName(), group.getCode());
+
+    }
+
+    @Transactional
+    public GroupDTO exitGroup(User user, Group group){
+        user.deleteGroup(group);
+        return new GroupDTO(group.getName(), group.getCode());
     }
 
 

@@ -1,16 +1,9 @@
 package projectbusan.gongda.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,6 +12,7 @@ import java.util.Set;
 @Entity
 @Table(name = "user_tbl")
 @Data
+@EqualsAndHashCode(callSuper=false)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -40,8 +34,25 @@ public class User extends BaseTimeStamp {
     @Column(name = "user_activated", nullable = false)
     private boolean activated;
 
-    @OneToMany(mappedBy = "user")
-    private List<UserGroup> userGroups = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "user_group_tbl",
+            joinColumns = @JoinColumn(name = "user_idx"),
+            inverseJoinColumns = @JoinColumn(name = "group_idx")
+    )
+
+    @Builder.Default
+    private List<Group> groupList = new ArrayList<>();
+    public void addGroup(Group group){
+        this.getGroupList().add(group);
+        group.getUserList().add(this);
+    }
+
+    public void deleteGroup(Group group){
+        this.getGroupList().remove(group);
+        group.getUserList().remove(this);
+    }
+
     @ManyToMany
     @JoinTable(
             name = "user_authority",

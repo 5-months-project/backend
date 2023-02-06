@@ -1,24 +1,23 @@
 package projectbusan.gongda.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper=false)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "group_tbl")
-public class Group {
+public class Group extends BaseTimeStamp{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "group_idx")
     private Long id;
@@ -31,15 +30,9 @@ public class Group {
     @Column(name = "group_password", nullable = false)
     private String password;
 
-
-    @Column(name = "created_at", nullable = false) @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false) @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "group")
-    private List<UserGroup> userGroups = new ArrayList<>();
+    @Builder.Default
+    @ManyToMany(mappedBy = "groupList")
+    private List<User> userList = new ArrayList<>();
 
 
 
