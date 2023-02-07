@@ -44,8 +44,8 @@ public class User extends BaseTimeStamp {
     @Builder.Default
     private List<Group> groupList = new ArrayList<>();
     public void addGroup(Group group){
-        this.getGroupList().add(group);
-        group.getUserList().add(this);
+        if (!this.getGroupList().contains(group)) this.getGroupList().add(group);
+        if(!group.getUserList().contains(this)) group.getUserList().add(this);
     }
 
     public void deleteGroup(Group group){
