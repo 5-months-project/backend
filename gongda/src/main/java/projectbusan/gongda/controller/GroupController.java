@@ -107,7 +107,7 @@ public class GroupController {
     }
 
     /*그룹나가기*/
-    @PostMapping("/group/{groupcode}")
+    @DeleteMapping("/group/{groupcode}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<GroupDTO> exit(@PathVariable String groupcode,Authentication authentication){
         String userEmail = authentication.getName();
