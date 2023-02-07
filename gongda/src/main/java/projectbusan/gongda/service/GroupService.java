@@ -57,7 +57,7 @@ public class GroupService {
     private String codeCreate(){
         StringBuffer code = new StringBuffer();
         Random rnd = new Random();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 11; i++) {
             int rIndex = rnd.nextInt(3);
             switch (rIndex) {
                 case 0:

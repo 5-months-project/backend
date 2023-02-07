@@ -49,8 +49,8 @@ public class User extends BaseTimeStamp {
     }
 
     public void deleteGroup(Group group){
-        this.getGroupList().remove(group);
-        group.getUserList().remove(this);
+        if (this.getGroupList().contains(group)) this.getGroupList().remove(group);
+        if ( group.getUserList().contains(this)) group.getUserList().remove(this);
     }
 
     @ManyToMany

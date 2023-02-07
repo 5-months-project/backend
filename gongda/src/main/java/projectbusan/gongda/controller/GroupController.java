@@ -40,11 +40,20 @@ public class GroupController {
     /*그룹생성*/
     @PostMapping("/groups")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<GroupDTO> create(@Valid @RequestBody GroupCreateDTO groupCreateDto){
+    public ResponseEntity<GroupDTO> create(@Valid @RequestBody GroupCreateDTO groupCreateDto, Authentication authentication){
         Group group =new Group();
-        group.setName(groupCreateDto.getName());
+        group.setName(groupCreateDto.getGroupname());
         group.setPassword(groupCreateDto.getPassword());
-        return ResponseEntity.ok(groupService.createGroup(group));
+        groupService.createGroup(group);
+
+        String userEmail = authentication.getName();
+        Optional<User> opUser = userRepository.findOneWithAuthoritiesByUsername(userEmail);
+        if (opUser.isEmpty()){
+            throw new NotFoundMemberException("일치하는 유저를 찾을 수 없습니다.");
+        }
+        User user = opUser.get();
+
+        return ResponseEntity.ok(groupService.enterGroup(user,group));
     }
 
     /*유저의 그룹리스트 조회*/
@@ -52,7 +61,7 @@ public class GroupController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ResultDTO> groups(Authentication authentication){
         String userEmail = authentication.getName();
-
+        if (userEmail != null)throw new NotFoundMemberException("일치하는 유저가 없습니다.");
         Optional<User> opUser =userRepository.findOneWithAuthoritiesByUsername(userEmail);
         if (opUser.isEmpty()){
             throw new NotFoundMemberException("일치하는 유저가 없습니다.");
@@ -112,6 +121,7 @@ public class GroupController {
             throw new NotFoundMemberException("일치하는 그룹을 찾을 수 없습니다.");
         }
         Group group= opGroup.get();
+
         return ResponseEntity.ok(groupService.exitGroup(user,group)); //유저-그룹 삭제
     }
 

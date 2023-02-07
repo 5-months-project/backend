@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class GroupCreateDTO {
-    private String name;
+    private String groupname;
     private String password;
 
 }
