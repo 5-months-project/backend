@@ -2,6 +2,7 @@ package projectbusan.gongda.service;
 
 
 import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import projectbusan.gongda.dto.GroupDTO;
 import projectbusan.gongda.dto.GroupEnterDTO;
@@ -15,18 +16,19 @@ import projectbusan.gongda.repository.GroupRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
 
 
 @Transactional
 @Service
 public class GroupService {
     private final GroupRepository groupRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
 
-    public GroupService(GroupRepository groupRepository) {
+    public GroupService(GroupRepository groupRepository, PasswordEncoder passwordEncoder) {
         this.groupRepository = groupRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /*
@@ -87,7 +89,7 @@ public class GroupService {
         }
         Group group = groupRepository.findByCode(code).get();
         //패스워드 암호화해야함
-        if (group.getPassword()!=password){
+        if (passwordEncoder.matches(password, group.getPassword())){
             throw new WrongGroupPasswordException("그룹참여 패스워드가 틀렸습니다.");
         }
         return group;

@@ -1,17 +1,22 @@
 package projectbusan.gongda.controller;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import projectbusan.gongda.dto.*;
 import projectbusan.gongda.entity.Group;
 import projectbusan.gongda.entity.User;
 import projectbusan.gongda.exception.NotFoundGroupException;
 import projectbusan.gongda.exception.NotFoundMemberException;
+import projectbusan.gongda.jwt.TokenProvider;
 import projectbusan.gongda.repository.GroupRepository;
 import projectbusan.gongda.repository.UserRepository;
 import projectbusan.gongda.service.GroupService;
+import projectbusan.gongda.utils.SecurityUtil;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -28,13 +33,21 @@ public class GroupController {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
 
+    private final TokenProvider tokenProvider;
+    private final PasswordEncoder passwordEncoder;
+
+
+
+
 
     //DI 수정필요
     @Autowired
-    public GroupController(GroupService groupService, GroupRepository groupRepository,  UserRepository userRepository) {
+    public GroupController(GroupService groupService, GroupRepository groupRepository, UserRepository userRepository, TokenProvider tokenProvider, PasswordEncoder passwordEncoder) {
         this.groupService = groupService;
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
+        this.tokenProvider = tokenProvider;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /*그룹생성*/
@@ -43,9 +56,8 @@ public class GroupController {
     public ResponseEntity<GroupDTO> create(@Valid @RequestBody GroupCreateDTO groupCreateDto, Authentication authentication){
         Group group =new Group();
         group.setName(groupCreateDto.getGroupname());
-        group.setPassword(groupCreateDto.getPassword());
+        group.setPassword(passwordEncoder.encode(groupCreateDto.getPassword()));
         groupService.createGroup(group);
-
         String userEmail = authentication.getName();
         Optional<User> opUser = userRepository.findOneWithAuthoritiesByUsername(userEmail);
         if (opUser.isEmpty()){
@@ -59,12 +71,19 @@ public class GroupController {
     /*유저의 그룹리스트 조회*/
     @GetMapping("/groups")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ResultDTO> groups(Authentication authentication){
-        String userEmail = authentication.getName();
-        if (userEmail != null)throw new NotFoundMemberException("일치하는 유저가 없습니다.");
+    public ResponseEntity<ResultDTO> groups(HttpServletRequest request){
+//        String jwt = resolveToken(request);
+//        Authentication authentication=tokenProvider.getAuthentication(jwt);
+//        String userEmail= authentication.getName();
+        Optional<String> opName = SecurityUtil.getCurrentUsername();
+        if (opName.isEmpty()){
+            throw new NotFoundMemberException("이름이 없습니다.");
+        }
+        String userEmail= opName.get();
+        if (userEmail != null)throw new NotFoundMemberException("일치하는 유저가 없습니다.authentication.getName "+userEmail);
         Optional<User> opUser =userRepository.findOneWithAuthoritiesByUsername(userEmail);
         if (opUser.isEmpty()){
-            throw new NotFoundMemberException("일치하는 유저가 없습니다.");
+            throw new NotFoundMemberException("일치하는 유저가 없습니다.findOneWithAuthoritiesByUsername"+userEmail);
         }
         User user = userRepository.findOneWithAuthoritiesByUsername(userEmail).get();
         List<Group> findGroups = groupService.findGroups(user); //유저엔티티로 그룹들찾아오기
@@ -77,14 +96,22 @@ public class GroupController {
     /*그룹참여*/
     @PostMapping("/group")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<GroupDTO> enter(@Valid @RequestBody GroupEnterDTO groupEnterDto, Authentication authentication){
-        String userEmail = authentication.getName();
+    public ResponseEntity<GroupDTO> enter(@Valid @RequestBody GroupEnterDTO groupEnterDto, HttpServletRequest request){
+//        String jwt = resolveToken(request);
+//        Authentication authentication=tokenProvider.getAuthentication(jwt);
+//        String userEmail= authentication.getName();
+        Optional<String> opName = SecurityUtil.getCurrentUsername();
+        if (opName.isEmpty()){
+            throw new NotFoundMemberException("이름이 없습니다.");
+        }
+        String userEmail= opName.get();
         Optional<User> opUser = userRepository.findOneWithAuthoritiesByUsername(userEmail);
         if (opUser.isEmpty()){
             throw new NotFoundMemberException("일치하는 유저를 찾을 수 없습니다.");
         }
         User user = opUser.get();
         Group group = groupService.findGroup(groupEnterDto);
+
         return ResponseEntity.ok(groupService.enterGroup(user,group));//유저-그룹추가
     }
 
@@ -109,8 +136,10 @@ public class GroupController {
     /*그룹나가기*/
     @DeleteMapping("/group/{groupcode}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<GroupDTO> exit(@PathVariable String groupcode,Authentication authentication){
-        String userEmail = authentication.getName();
+    public ResponseEntity<GroupDTO> exit(@PathVariable String groupcode,HttpServletRequest request){
+        String jwt = resolveToken(request);
+        Authentication authentication=tokenProvider.getAuthentication(jwt);
+        String userEmail= authentication.getName();
         Optional<User> opUser = userRepository.findOneWithAuthoritiesByUsername(userEmail);
         if (opUser.isEmpty()){
             throw new NotFoundMemberException("일치하는 유저를 찾을 수 없습니다.");
@@ -123,6 +152,17 @@ public class GroupController {
         Group group= opGroup.get();
 
         return ResponseEntity.ok(groupService.exitGroup(user,group)); //유저-그룹 삭제
+    }
+
+
+    private String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+
+        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+
+        return null;
     }
 
 }
