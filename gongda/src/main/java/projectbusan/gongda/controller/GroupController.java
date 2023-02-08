@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -71,22 +72,16 @@ public class GroupController {
     /*유저의 그룹리스트 조회*/
     @GetMapping("/groups")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ResultDTO> groups(HttpServletRequest request){
-//        String jwt = resolveToken(request);
-//        Authentication authentication=tokenProvider.getAuthentication(jwt);
-//        String userEmail= authentication.getName();
-        Optional<String> opName = SecurityUtil.getCurrentUsername();
-        if (opName.isEmpty()){
-            throw new NotFoundMemberException("이름이 없습니다.");
-        }
-        String userEmail= opName.get();
-        if (userEmail != null)throw new NotFoundMemberException("일치하는 유저가 없습니다.authentication.getName "+userEmail);
+
+    public ResponseEntity<ResultDTO> groups(@AuthenticationPrincipal User user){
+        String userEmail= user.getUsername();
+        if (userEmail == null)throw new NotFoundMemberException("일치하는 유저가 없습니다.authentication.getName "+user);
         Optional<User> opUser =userRepository.findOneWithAuthoritiesByUsername(userEmail);
         if (opUser.isEmpty()){
             throw new NotFoundMemberException("일치하는 유저가 없습니다.findOneWithAuthoritiesByUsername"+userEmail);
         }
-        User user = userRepository.findOneWithAuthoritiesByUsername(userEmail).get();
-        List<Group> findGroups = groupService.findGroups(user); //유저엔티티로 그룹들찾아오기
+        User founduser = userRepository.findOneWithAuthoritiesByUsername(userEmail).get();
+        List<Group> findGroups = groupService.findGroups(founduser); //유저엔티티로 그룹들찾아오기
         List<GroupDTO> groups = findGroups.stream()
                 .map(m-> new GroupDTO(m.getName(),m.getCode()))
                 .collect(Collectors.toList());

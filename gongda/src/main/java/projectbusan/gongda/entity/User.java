@@ -3,6 +3,7 @@ package projectbusan.gongda.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import projectbusan.gongda.service.ScheduleService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,4 +63,17 @@ public class User extends BaseTimeStamp {
 
     public User(String subject, String s, Collection<? extends GrantedAuthority> authorities) {
     }
+
+
+    @OneToMany(mappedBy = "user")
+    private List<Schedule> schedules = new ArrayList<>();
+
+    public void addSchedule(Schedule schedule){
+        if (!this.getSchedules().contains(schedule)) this.getSchedules().add(schedule);
+    }
+
+    public void deleteSchedule(Schedule schedule){
+        if (this.getSchedules().contains(schedule)) this.getSchedules().remove(schedule);
+    }
 }
+

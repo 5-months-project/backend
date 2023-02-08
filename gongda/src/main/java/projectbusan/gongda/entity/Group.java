@@ -34,7 +34,16 @@ public class Group extends BaseTimeStamp{
     @ManyToMany(mappedBy = "groupList")
     private List<User> userList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "group")
+    private List<Schedule> schedules = new ArrayList<>();
 
+    public void addSchedule(Schedule schedule){
+        if (!this.getSchedules().contains(schedule)) this.getSchedules().add(schedule);
+    }
+
+    public void deleteSchedule(Schedule schedule){
+        if (this.getSchedules().contains(schedule)) this.getSchedules().remove(schedule);
+    }
 
 
 }
