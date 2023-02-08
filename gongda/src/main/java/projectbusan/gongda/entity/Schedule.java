@@ -24,11 +24,14 @@ public class Schedule extends BaseTimeStamp {
     @Column(length= 11,name= "schedule_content",nullable = false)
     private String content;
 
-    @Column(name= "schedule_time_from",nullable = false)
-    private LocalDateTime time_start;
+    @Column(length = 8,name= "schedule_date",nullable = false)
+    private Long date;
 
-    @Column(name= "schedule_time_to",nullable = false)
-    private LocalDateTime time_end;
+    @Column(length = 12,name= "schedule_time_from",nullable = false)
+    private Long time_start;
+
+    @Column(length = 12,name= "schedule_time_to",nullable = false)
+    private Long time_end;
 
     @Column(name = "schedule_creator",nullable = false)
     private Long creator_id;
@@ -41,6 +44,10 @@ public class Schedule extends BaseTimeStamp {
 
     @Column(name = "schedule_category")
     private String category;
+
+    @Column(length= 11,name= "group_code",nullable = false)
+    private String neighbor_code;
+
 
 
     @ManyToOne

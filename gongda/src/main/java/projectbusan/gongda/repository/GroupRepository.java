@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface GroupRepository extends JpaRepository<Group,Long> {
 
     Group save(Group group);
-    Optional<Group> findByCode(String code);
+    Optional<Group> findOneByCode(String code);
 
 
 

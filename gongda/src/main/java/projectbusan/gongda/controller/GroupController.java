@@ -115,7 +115,7 @@ public class GroupController {
     @GetMapping("/groups/{groupcode}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ResultDTO> groupMembers(@PathVariable String groupcode){
-        Optional<Group> opGroup =groupRepository.findByCode(groupcode);
+        Optional<Group> opGroup =groupRepository.findOneByCode(groupcode);
         if (opGroup.isEmpty()){
             throw new NotFoundGroupException("코드와 일치하는 그룹을 찾을 수 없습니다.");
         }
@@ -140,7 +140,7 @@ public class GroupController {
             throw new NotFoundMemberException("일치하는 유저를 찾을 수 없습니다.");
         }
         User user = opUser.get();
-        Optional<Group> opGroup = groupRepository.findByCode(groupcode);
+        Optional<Group> opGroup = groupRepository.findOneByCode(groupcode);
         if (opGroup.isEmpty()){
             throw new NotFoundMemberException("일치하는 그룹을 찾을 수 없습니다.");
         }

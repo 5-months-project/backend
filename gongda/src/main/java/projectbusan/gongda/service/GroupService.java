@@ -51,7 +51,7 @@ public class GroupService {
         코드중복조사
     */
     private boolean validDuplicateMember(Group group) {
-        if (groupRepository.findByCode(group.getCode()).isPresent()) return true;
+        if (groupRepository.findOneByCode(group.getCode()).isPresent() && groupRepository.findOneByCode(group.getCode())!=null) return true;
         else return false;
 
     }
@@ -83,11 +83,11 @@ public class GroupService {
     public Group findGroup(GroupEnterDTO groupEnterDto){
         String code = groupEnterDto.getGroupCode();
         String password = groupEnterDto.getGroupCode();
-        Optional<Group> opGroup =groupRepository.findByCode(code);
+        Optional<Group> opGroup =groupRepository.findOneByCode(code);
         if (opGroup.isEmpty()){
             throw new NotFoundGroupException("코드와 일치하는 그룹을 찾을 수 없습니다.");
         }
-        Group group = groupRepository.findByCode(code).get();
+        Group group = opGroup.get();
         //패스워드 암호화해야함
         if (passwordEncoder.matches(password, group.getPassword())){
             throw new WrongGroupPasswordException("그룹참여 패스워드가 틀렸습니다.");
