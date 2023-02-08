@@ -22,7 +22,7 @@ public class ScheduleDTO {
     private Long creator_id;
     private Long modifier_id;
     private Long group_id;
-    private String neighbor_code;
+    private String code;
     private String category;
 
 }

@@ -45,8 +45,8 @@ public class Schedule extends BaseTimeStamp {
     @Column(name = "schedule_category")
     private String category;
 
-    @Column(length= 11,name= "group_code",nullable = false)
-    private String neighbor_code;
+    @Column(length= 11,name= "schedule_code",nullable = false)
+    private String code;
 
 
 

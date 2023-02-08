@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface ScheduleRepository extends JpaRepository<Schedule,Long> {
 
     List<Schedule> findAllByCreator_idAndDateAndGroup_id(Long user_id, Long date,Long group_id);
-    Optional<Schedule> findOneByNeighbor_code(String neighbor_code);
-    void deleteAllByNeighbor_code(String neighbor_code);
+    Optional<Schedule> findOneByCode(String code);
+    void deleteAllByCode(String code);
 
 }

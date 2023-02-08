@@ -92,7 +92,7 @@ public class ScheduleService {
                     .time_start(scheduleCreateDTO.getTime_start())
                     .category(scheduleCreateDTO.getCategory())
                     .date(i)
-                    .neighbor_code(code)
+                    .code(code)
                     .build();
             scheduleRepository.save(schedule);
             user.addSchedule(schedule);
@@ -107,7 +107,7 @@ public class ScheduleService {
                     .group_id(schedule.getGroup_id())
                     .time_end(schedule.getTime_end())
                     .time_start(schedule.getTime_start())
-                    .neighbor_code(schedule.getNeighbor_code())
+                    .code(schedule.getCode())
                     .build();
             scheduleDTOS.add(scheduleDTO);
         }
@@ -119,7 +119,7 @@ public class ScheduleService {
     public ScheduleDTO remove()
 
     public List<ScheduleDTO> modify(ScheduleModifyDTO scheduleModifyDTO, User user){
-        Optional<Schedule> opSchedule = scheduleRepository.findOneByNeighbor_code(scheduleModifyDTO.getNeighbor_code());
+        Optional<Schedule> opSchedule = scheduleRepository.findOneByCode(scheduleModifyDTO.getCode());
         if (opSchedule.isEmpty()){
             throw new NotFoundGroupException("코드와 일치하는 스케줄을 찾을 수 없습니다.");
         }
@@ -132,19 +132,19 @@ public class ScheduleService {
                 .time_start(schedule.getTime_start())
                 .time_end(schedule.getTime_end())
                 .build();
-        scheduleRepository.deleteAllByNeighbor_code(scheduleModifyDTO.getNeighbor_code());
+        scheduleRepository.deleteAllByCode(scheduleModifyDTO.getCode());
         return create(scheduleCreateDTO,user);
     }
 
     public String delete(String neighbor_code){
-        scheduleRepository.deleteAllByNeighbor_code(neighbor_code);
+        scheduleRepository.deleteAllByCode(neighbor_code);
         String msg= "neighbor_code="+neighbor_code+", delete Success";
         return msg;
     }
 
 
     private boolean validDuplicateCode(String code) {
-        if (scheduleRepository.findOneByNeighbor_code(code).isPresent() && scheduleRepository.findOneByNeighbor_code(code)!=null) return true;
+        if (scheduleRepository.findOneByCode(code).isPresent() && scheduleRepository.findOneByCode(code)!=null) return true;
         else return false;
 
     }

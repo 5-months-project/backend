@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class ScheduleController {
     private final ScheduleService scheduleService;
-
+중
     @Autowired
     public ScheduleController(ScheduleService scheduleService) {
         this.scheduleService = scheduleService;
@@ -25,7 +25,7 @@ public class ScheduleController {
 
 
 
-    /*개인스케쥴-생성*/
+    /*개인스케쥴-생성  생성시 날짜벌로 객체가 생성됨, 예를 들어 2/1~2/3인 스케쥴을 생성시 2/1,2/2,2/3 3개의 객체가 생성되고 이 셋은 동일한 code을 가짐 */
     @PostMapping("/schedule")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ResultDTO> create(ScheduleCreateDTO scheduleCreateDTO){
@@ -53,11 +53,11 @@ public class ScheduleController {
     }
 
     /*개인스케쥴-삭제*/
-    @DeleteMapping("/schedule/{neighbor_code}")
+    @DeleteMapping("/schedule/{code}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ResultDTO> delete(@PathVariable String neighbor_code){
+    public ResponseEntity<ResultDTO> delete(@PathVariable String code){
         //todo 유저입력받아야함, 권한확인
-        ResultDTO<String> resultDTO = new ResultDTO<>(scheduleService.delete(neighbor_code));
+        ResultDTO<String> resultDTO = new ResultDTO<>(scheduleService.delete(code));
         return ResponseEntity.ok(resultDTO);
     }
 
@@ -101,7 +101,8 @@ public class ScheduleController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ResultDTO> readAll(){
         //todo
-        return ResponseEntity.ok(Result(scheduleService.readAll(user)));
+        ResultDTO<String> resultDTO = new ResultDTO<>(scheduleService.readAll(user));
+        return ResponseEntity.ok(resultDTO);
     }
 
     /*그룹의 모든 스케쥴 가져오기*/
