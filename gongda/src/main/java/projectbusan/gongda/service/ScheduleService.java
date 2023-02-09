@@ -1,5 +1,6 @@
 package projectbusan.gongda.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import projectbusan.gongda.dto.ScheduleCreateDTO;
 import projectbusan.gongda.dto.ScheduleDTO;
@@ -17,10 +18,12 @@ import java.util.Optional;
 import java.util.Random;
 
 @Service
+@Transactional
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final GroupRepository groupRepository;
+
 
 
     public ScheduleService(ScheduleRepository scheduleRepository, GroupRepository groupRepository) {
@@ -30,18 +33,19 @@ public class ScheduleService {
 
 
     public List<ScheduleDTO> readByDate(User user, Long date) {
-        List<Schedule> schedules = scheduleRepository.findAllByCreator_idAndDateAndGroup_id(user.getId(), date, 0L);
+        List<Schedule> schedules = scheduleRepository.findAllByCreatorAndDateAndGroupid(user.getId(), date, 0L);
         List<ScheduleDTO> scheduleDTOS = new ArrayList<>();
         for (Schedule schedule : schedules) {
             ScheduleDTO scheduleDTO = ScheduleDTO.builder()
                     .content(schedule.getContent())
                     .name(schedule.getName())
                     .category(schedule.getCategory())
-                    .creator_id(schedule.getCreator_id())
-                    .modifier_id(schedule.getModifier_id())
-                    .group_id(schedule.getGroup_id())
-                    .time_end(schedule.getTime_end())
-                    .time_start(schedule.getTime_start())
+                    .creator_id(schedule.getCreator())
+                    .modifier_id(schedule.getModifier())
+                    .group_id(schedule.getGroupid())
+                    .time_end(schedule.getTimeEnd())
+                    .time_start(schedule.getTimeStart())
+                    .schedule_code(schedule.getScheduleCode())
                     .build();
             scheduleDTOS.add(scheduleDTO);
         }
@@ -54,18 +58,19 @@ public class ScheduleService {
             throw new NotFoundGroupException("코드와 일치하는 그룹이 없습니다.");
         }
         Group group = opGroup.get();
-        List<Schedule> schedules = scheduleRepository.findAllByDateAndGroup_id(date, group.getId());
+        List<Schedule> schedules = scheduleRepository.findAllByDateAndGroupid(date, group.getId());
         List<ScheduleDTO> scheduleDTOS = new ArrayList<>();
         for (Schedule schedule : schedules) {
             ScheduleDTO scheduleDTO = ScheduleDTO.builder()
                     .content(schedule.getContent())
                     .name(schedule.getName())
                     .category(schedule.getCategory())
-                    .creator_id(schedule.getCreator_id())
-                    .modifier_id(schedule.getModifier_id())
-                    .group_id(schedule.getGroup_id())
-                    .time_end(schedule.getTime_end())
-                    .time_start(schedule.getTime_start())
+                    .creator_id(schedule.getCreator())
+                    .modifier_id(schedule.getModifier())
+                    .group_id(schedule.getGroupid())
+                    .time_end(schedule.getTimeEnd())
+                    .time_start(schedule.getTimeStart())
+                    .schedule_code(schedule.getScheduleCode())
                     .build();
             scheduleDTOS.add(scheduleDTO);
         }
@@ -82,11 +87,12 @@ public class ScheduleService {
                     .content(schedule.getContent())
                     .name(schedule.getName())
                     .category(schedule.getCategory())
-                    .creator_id(schedule.getCreator_id())
-                    .modifier_id(schedule.getModifier_id())
-                    .group_id(schedule.getGroup_id())
-                    .time_end(schedule.getTime_end())
-                    .time_start(schedule.getTime_start())
+                    .creator_id(schedule.getCreator())
+                    .modifier_id(schedule.getModifier())
+                    .group_id(schedule.getGroupid())
+                    .time_end(schedule.getTimeEnd())
+                    .time_start(schedule.getTimeStart())
+                    .schedule_code(schedule.getScheduleCode())
                     .build();
             if (!scheduleDTOS.contains(scheduleDTO)) {
                 scheduleDTOS.add(scheduleDTO);
@@ -108,11 +114,12 @@ public class ScheduleService {
                     .content(schedule.getContent())
                     .name(schedule.getName())
                     .category(schedule.getCategory())
-                    .creator_id(schedule.getCreator_id())
-                    .modifier_id(schedule.getModifier_id())
-                    .group_id(schedule.getGroup_id())
-                    .time_end(schedule.getTime_end())
-                    .time_start(schedule.getTime_start())
+                    .creator_id(schedule.getCreator())
+                    .modifier_id(schedule.getModifier())
+                    .group_id(schedule.getGroupid())
+                    .time_end(schedule.getTimeEnd())
+                    .time_start(schedule.getTimeStart())
+                    .schedule_code(schedule.getScheduleCode())
                     .build();
             if (!scheduleDTOS.contains(scheduleDTO)) {
                 scheduleDTOS.add(scheduleDTO);
@@ -122,7 +129,7 @@ public class ScheduleService {
     }
 
     public ScheduleDTO readByCode(String code){
-        Optional<Schedule> opSchedule = scheduleRepository.findOneByCode(code);
+        Optional<Schedule> opSchedule = scheduleRepository.findOneByScheduleCode(code);
         if(opSchedule.isEmpty()){
             throw new NotFoundScheduleException("코드와 일치하는 스케쥴을 찾을 수 없습니다.");
         }
@@ -131,11 +138,12 @@ public class ScheduleService {
                 .content(schedule.getContent())
                 .name(schedule.getName())
                 .category(schedule.getCategory())
-                .creator_id(schedule.getCreator_id())
-                .modifier_id(schedule.getModifier_id())
-                .group_id(schedule.getGroup_id())
-                .time_end(schedule.getTime_end())
-                .time_start(schedule.getTime_start())
+                .creator_id(schedule.getCreator())
+                .modifier_id(schedule.getModifier())
+                .group_id(schedule.getGroupid())
+                .time_end(schedule.getTimeEnd())
+                .time_start(schedule.getTimeStart())
+                .schedule_code(schedule.getScheduleCode())
                 .build();
         return scheduleDTO;
     }
@@ -154,16 +162,16 @@ public class ScheduleService {
 
         for(Long i=start;i<=end;i++) {
             Schedule schedule = Schedule.builder()
-                    .creator_id(user.getId())
+                    .creator(user.getId())
                     .content(scheduleCreateDTO.getContent())
-                    .group_id(0L)
-                    .modifier_id(user.getId())
+                    .groupid(0L)
+                    .modifier(user.getId())
                     .name(scheduleCreateDTO.getName())
-                    .time_end(scheduleCreateDTO.getTime_end())
-                    .time_start(scheduleCreateDTO.getTime_start())
+                    .timeEnd(scheduleCreateDTO.getTime_end())
+                    .timeStart(scheduleCreateDTO.getTime_start())
                     .category(scheduleCreateDTO.getCategory())
                     .date(i)
-                    .schedule_code(code)
+                    .scheduleCode(code)
                     .build();
             user.addSchedule(schedule);
         }
@@ -195,16 +203,16 @@ public class ScheduleService {
         }
         for(Long i=start;i<=end;i++) {
             Schedule schedule = Schedule.builder()
-                    .creator_id(scheduleCreateDTO.getCreator_id())
+                    .creator(scheduleCreateDTO.getCreator_id())
                     .content(scheduleCreateDTO.getContent())
-                    .group_id(group.getId())
-                    .modifier_id(user.getId())
+                    .groupid(group.getId())
+                    .modifier(user.getId())
                     .name(scheduleCreateDTO.getName())
-                    .time_end(scheduleCreateDTO.getTime_end())
-                    .time_start(scheduleCreateDTO.getTime_start())
+                    .timeEnd(scheduleCreateDTO.getTime_end())
+                    .timeStart(scheduleCreateDTO.getTime_start())
                     .category(scheduleCreateDTO.getCategory())
                     .date(i)
-                    .schedule_code(code)
+                    .scheduleCode(code)
                     .build();
             group.addSchedule(schedule);
         }
@@ -224,8 +232,8 @@ public class ScheduleService {
 
 
     public ScheduleDTO modify(ScheduleModifyDTO scheduleModifyDTO, User user){
-        List<Schedule> schedules = scheduleRepository.findAllByCode(scheduleModifyDTO.getSchedule_code());
-        Optional<Schedule> opSchedule = scheduleRepository.findOneByCode(scheduleModifyDTO.getSchedule_code());
+        List<Schedule> schedules = scheduleRepository.findAllByScheduleCode(scheduleModifyDTO.getSchedule_code());
+        Optional<Schedule> opSchedule = scheduleRepository.findOneByScheduleCode(scheduleModifyDTO.getSchedule_code());
         for(Schedule schedule:schedules){
             user.deleteSchedule(schedule);
         }
@@ -237,9 +245,9 @@ public class ScheduleService {
                 .name(scheduleModifyDTO.getName())
                 .content(scheduleModifyDTO.getContent())
                 .category(scheduleModifyDTO.getCategory())
-                .time_start(schedule.getTime_start())
-                .time_end(schedule.getTime_end())
-                .creator_id(schedule.getCreator_id())
+                .time_start(schedule.getTimeStart())
+                .time_end(schedule.getTimeEnd())
+                .creator_id(schedule.getCreator())
                 .build();
         return create(scheduleCreateDTO,user);
     }
@@ -251,8 +259,8 @@ public class ScheduleService {
         }
         Group group=opGroup.get();
 
-        List<Schedule> schedules = scheduleRepository.findAllByCode(scheduleModifyDTO.getSchedule_code());
-        Optional<Schedule> opSchedule = scheduleRepository.findOneByCode(scheduleModifyDTO.getSchedule_code());
+        List<Schedule> schedules = scheduleRepository.findAllByScheduleCode(scheduleModifyDTO.getSchedule_code());
+        Optional<Schedule> opSchedule = scheduleRepository.findOneByScheduleCode(scheduleModifyDTO.getSchedule_code());
         for(Schedule schedule:schedules){
             group.deleteSchedule(schedule);
         }
@@ -264,17 +272,17 @@ public class ScheduleService {
                 .name(scheduleModifyDTO.getName())
                 .content(scheduleModifyDTO.getContent())
                 .category(scheduleModifyDTO.getCategory())
-                .time_start(schedule.getTime_start())
-                .time_end(schedule.getTime_end())
-                .creator_id(schedule.getCreator_id())
+                .time_start(schedule.getTimeStart())
+                .time_end(schedule.getTimeEnd())
+                .creator_id(schedule.getCreator())
                 .build();
         return group_create(scheduleCreateDTO,group.getCode(),user);
     }
 
 
     public ScheduleDTO delete(String code,User user){
-        List<Schedule> schedules = scheduleRepository.findAllByCode(code);
-        Optional<Schedule> opSchedule = scheduleRepository.findOneByCode(code);
+        List<Schedule> schedules = scheduleRepository.findAllByScheduleCode(code);
+        Optional<Schedule> opSchedule = scheduleRepository.findOneByScheduleCode(code);
         for(Schedule schedule:schedules){
             user.deleteSchedule(schedule);
         }
@@ -286,12 +294,12 @@ public class ScheduleService {
                 .content(schedule.getContent())
                 .name(schedule.getName())
                 .category(schedule.getCategory())
-                .creator_id(schedule.getCreator_id())
-                .modifier_id(schedule.getModifier_id())
-                .group_id(schedule.getGroup_id())
-                .time_end(schedule.getTime_end())
-                .time_start(schedule.getTime_start())
-                .schedule_code(schedule.getSchedule_code())
+                .creator_id(schedule.getCreator())
+                .modifier_id(schedule.getModifier())
+                .group_id(schedule.getGroupid())
+                .time_end(schedule.getTimeEnd())
+                .time_start(schedule.getTimeStart())
+                .schedule_code(schedule.getScheduleCode())
                 .build();
 
         return scheduleDTO;
@@ -299,10 +307,10 @@ public class ScheduleService {
 
     public ScheduleDTO group_delete(String schedule_code){
 
-        List<Schedule> schedules = scheduleRepository.findAllByCode(schedule_code);
-        Optional<Schedule> opSchedule = scheduleRepository.findOneByCode(schedule_code);
+        List<Schedule> schedules = scheduleRepository.findAllByScheduleCode(schedule_code);
+        Optional<Schedule> opSchedule = scheduleRepository.findOneByScheduleCode(schedule_code);
         Schedule schedule = opSchedule.get();
-        Optional<Group> opGroup = groupRepository.findOneById(schedule.getGroup_id());
+        Optional<Group> opGroup = groupRepository.findOneById(schedule.getGroupid());
         if(opGroup.isEmpty()){
             throw new NotFoundGroupException("코드와 일치하는 그룹을 찾을 수 없습니다.");
         }
@@ -317,12 +325,12 @@ public class ScheduleService {
                 .content(schedule.getContent())
                 .name(schedule.getName())
                 .category(schedule.getCategory())
-                .creator_id(schedule.getCreator_id())
-                .modifier_id(schedule.getModifier_id())
-                .group_id(schedule.getGroup_id())
-                .time_end(schedule.getTime_end())
-                .time_start(schedule.getTime_start())
-                .schedule_code(schedule.getSchedule_code())
+                .creator_id(schedule.getCreator())
+                .modifier_id(schedule.getModifier())
+                .group_id(schedule.getGroupid())
+                .time_end(schedule.getTimeEnd())
+                .time_start(schedule.getTimeStart())
+                .schedule_code(schedule.getScheduleCode())
                 .build();
 
         return scheduleDTO;
@@ -330,7 +338,7 @@ public class ScheduleService {
 
 
     private boolean validDuplicateCode(String code) {
-        if (scheduleRepository.findOneByCode(code).isPresent() && scheduleRepository.findOneByCode(code)!=null) return true;
+        if (scheduleRepository.findOneByScheduleCode(code).isPresent() && scheduleRepository.findOneByScheduleCode(code)!=null) return true;
         else return false;
 
     }

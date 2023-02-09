@@ -21,32 +21,32 @@ public class Schedule extends BaseTimeStamp {
     @Column(name= "schedule_name",nullable = false)
     private String name;
 
-    @Column(length= 11,name= "schedule_content",nullable = false)
+    @Column(columnDefinition = "LONGTEXT", name= "schedule_content",nullable = false)
     private String content;
 
     @Column(length = 8,name= "schedule_date",nullable = false)
     private Long date;
 
     @Column(length = 12,name= "schedule_time_from",nullable = false)
-    private Long time_start;
+    private Long timeStart;
 
     @Column(length = 12,name= "schedule_time_to",nullable = false)
-    private Long time_end;
+    private Long timeEnd;
 
-    @Column(name = "schedule_creator",nullable = false)
-    private Long creator_id;
+    @Column(name = "schedule_creator_id",nullable = false)
+    private Long creator;
 
-    @Column(name = "schedule_modifier",nullable = false)
-    private Long modifier_id;
+    @Column(name = "schedule_modifier_id",nullable = false)
+    private Long modifier;
 
     @Column(name = "schedule_group_id")
-    private Long group_id;
+    private Long groupid;
 
     @Column(name = "schedule_category")
     private String category;
 
     @Column(length= 11,name= "schedule_code",nullable = false)
-    private String schedule_code;
+    private String scheduleCode;
 
 
 

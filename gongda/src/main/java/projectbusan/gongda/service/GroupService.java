@@ -18,8 +18,9 @@ import java.util.Optional;
 import java.util.Random;
 
 
-@Transactional
+
 @Service
+@Transactional
 public class GroupService {
     private final GroupRepository groupRepository;
     private final PasswordEncoder passwordEncoder;
