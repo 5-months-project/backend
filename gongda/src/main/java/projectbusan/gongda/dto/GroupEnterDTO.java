@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class GroupEnterDTO {
-    private String groupCode;
+    private String groupcode;
     private String password;
 
 }

@@ -82,8 +82,8 @@ public class GroupService {
     }
 
     public Group findGroup(GroupEnterDTO groupEnterDto){
-        String code = groupEnterDto.getGroupCode();
-        String password = groupEnterDto.getGroupCode();
+        String code = groupEnterDto.getGroupcode();
+        String password = groupEnterDto.getGroupcode();
         Optional<Group> opGroup =groupRepository.findOneByCode(code);
         if (opGroup.isEmpty()){
             throw new NotFoundGroupException("코드와 일치하는 그룹을 찾을 수 없습니다.");
