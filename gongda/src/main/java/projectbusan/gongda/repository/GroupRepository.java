@@ -12,6 +12,7 @@ public interface GroupRepository extends JpaRepository<Group,Long> {
 
     Group save(Group group);
     Optional<Group> findOneByCode(String code);
+    Optional<Group> findOneById(Long id);
 
 
 

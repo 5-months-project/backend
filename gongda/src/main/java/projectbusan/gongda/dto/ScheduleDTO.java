@@ -13,16 +13,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ScheduleDTO {
-    private Long id;
     private String name;
     private String content;
-    private Long date;
     private Long time_start;
     private Long time_end;
     private Long creator_id;
     private Long modifier_id;
     private Long group_id;
-    private String code;
+    private String schedule_code;
     private String category;
 
 }

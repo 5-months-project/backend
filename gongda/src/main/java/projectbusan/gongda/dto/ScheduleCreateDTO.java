@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ScheduleCreateDTO {
+    private Long creator_id;
     private String name;
     private String content;
     private Long time_start;

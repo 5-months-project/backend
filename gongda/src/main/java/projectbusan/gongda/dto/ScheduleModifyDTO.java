@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ScheduleModifyDTO {
-    private String code;
+    private String schedule_code;
     private String name;
     private String content;
     private String category;
