@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class GroupDTO {
-    private String name;
-    private String groupCode;
+    private String groupname;
+    private String groupcode;
 
 
 }
