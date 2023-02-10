@@ -106,16 +106,14 @@ public class ScheduleController {
     }
 
 
-
     /*그룹의 모든 스케쥴 가져오기 , DTO만들어서 하나처럼*/
     @GetMapping("/group-schedules/{group_code}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ResultDTO> group_readAll(@PathVariable String group_code){
-        //todo
+        //todo 접근권한확인
         ResultDTO<List> resultDTO = new ResultDTO<>(scheduleService.group_readAll(group_code));
         return ResponseEntity.ok(resultDTO);
     }
-
 
 
     /*코드로 일정 가져오기(개인,그룹 상관X) , DTO 만들어서 하나의 일정처럼 보이게 내보내기*/
@@ -125,6 +123,5 @@ public class ScheduleController {
         //todo 권한체크: 그룹id가 0이면 크레이터랑 유저가 일치하는지, 그룹id로 그룹찾고 그 그룹이 user의 리스트에 있는지 체크
         return ResponseEntity.ok(scheduleService.readByCode(schedule_code));
     }
-
 
 }

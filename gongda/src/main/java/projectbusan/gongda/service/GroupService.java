@@ -4,11 +4,14 @@ package projectbusan.gongda.service;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import projectbusan.gongda.dto.GroupCreateDTO;
 import projectbusan.gongda.dto.GroupDTO;
 import projectbusan.gongda.dto.GroupEnterDTO;
+import projectbusan.gongda.dto.UserInfoDTO;
 import projectbusan.gongda.entity.Group;
 import projectbusan.gongda.entity.User;
 import projectbusan.gongda.exception.NotFoundGroupException;
+import projectbusan.gongda.exception.NotFoundMemberException;
 import projectbusan.gongda.exception.WrongGroupPasswordException;
 import projectbusan.gongda.repository.GroupRepository;
 
@@ -16,7 +19,7 @@ import projectbusan.gongda.repository.GroupRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-
+import java.util.stream.Collectors;
 
 
 @Service
@@ -36,13 +39,16 @@ public class GroupService {
             그룹생성
         */
 
-    public GroupDTO createGroup(Group group){
+    public Group createGroup(GroupCreateDTO groupCreateDTO){
+        Group group =new Group();
+        group.setName(groupCreateDTO.getGroupname());
+        group.setPassword(passwordEncoder.encode(groupCreateDTO.getPassword()));
         group.setCode(codeCreate());
         while (validDuplicateMember(group)){
             group.setCode(codeCreate());
         }
         groupRepository.save(group);
-        return new GroupDTO(group.getName(), group.getCode());
+        return group;
 
 
     }
@@ -102,8 +108,17 @@ public class GroupService {
     }
 
     @Transactional
-    public List<User> findMembers(Group group){
-        return group.getUserList();
+    public List<UserInfoDTO> findMembers(String groupcode){
+        Optional<Group> opGroup =groupRepository.findOneByCode(groupcode);
+        if (opGroup.isEmpty()){
+            throw new NotFoundGroupException("코드와 일치하는 그룹을 찾을 수 없습니다.");
+        }
+        Group group = opGroup.get();
+        List<User> findMembers= group.getUserList();
+        List<UserInfoDTO> members = findMembers.stream()
+                .map(m-> new UserInfoDTO(m.getNickname(),m.getUsername()))
+                .collect(Collectors.toList());
+        return members;
     }
 
     @Transactional
@@ -114,11 +129,23 @@ public class GroupService {
     }
 
     @Transactional
-    public GroupDTO exitGroup(User user, Group group){
+    public GroupDTO exitGroup(User user, String groupcode){
+        Optional<Group> opGroup = groupRepository.findOneByCode(groupcode);
+        if (opGroup.isEmpty()){
+            throw new NotFoundMemberException("일치하는 그룹을 찾을 수 없습니다.");
+        }
+        Group group= opGroup.get();
         user.deleteGroup(group);
         return new GroupDTO(group.getName(), group.getCode());
     }
 
+    public List<GroupDTO> readGroups(User user){
+        List<Group> findGroups = findGroups(user); //유저엔티티로 그룹들찾아오기
+        List<GroupDTO> groups = findGroups.stream()
+                .map(m-> new GroupDTO(m.getName(),m.getCode()))
+                .collect(Collectors.toList());
+        return groups;
+    }
 
 
 
