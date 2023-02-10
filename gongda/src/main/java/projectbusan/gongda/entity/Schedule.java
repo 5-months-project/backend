@@ -33,14 +33,14 @@ public class Schedule extends BaseTimeStamp {
     @Column(length = 12,name= "schedule_time_to",nullable = false)
     private Long timeEnd;
 
-    @Column(name = "schedule_creator_id",nullable = false)
-    private Long creator;
+    @Column(name = "schedule_creator_email",nullable = false)
+    private String creator;//이메일
 
-    @Column(name = "schedule_modifier_id",nullable = false)
-    private Long modifier;
+    @Column(name = "schedule_modifier_email",nullable = false)
+    private String modifier;
 
-    @Column(name = "schedule_group_id")
-    private Long groupid;
+    @Column(name = "schedule_group_code")
+    private String groupcode;
 
     @Column(name = "schedule_category")
     private String category;

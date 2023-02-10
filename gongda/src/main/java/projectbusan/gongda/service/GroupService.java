@@ -10,6 +10,7 @@ import projectbusan.gongda.dto.GroupEnterDTO;
 import projectbusan.gongda.dto.UserInfoDTO;
 import projectbusan.gongda.entity.Group;
 import projectbusan.gongda.entity.User;
+import projectbusan.gongda.exception.AccessPermissionException;
 import projectbusan.gongda.exception.NotFoundGroupException;
 import projectbusan.gongda.exception.NotFoundMemberException;
 import projectbusan.gongda.exception.WrongGroupPasswordException;
@@ -95,7 +96,6 @@ public class GroupService {
             throw new NotFoundGroupException("코드와 일치하는 그룹을 찾을 수 없습니다.");
         }
         Group group = opGroup.get();
-        //패스워드 암호화해야함
         if (passwordEncoder.matches(password, group.getPassword())){
             throw new WrongGroupPasswordException("그룹참여 패스워드가 틀렸습니다.");
         }
@@ -108,12 +108,15 @@ public class GroupService {
     }
 
     @Transactional
-    public List<UserInfoDTO> findMembers(String groupcode){
+    public List<UserInfoDTO> findMembers(String groupcode,User user){
         Optional<Group> opGroup =groupRepository.findOneByCode(groupcode);
         if (opGroup.isEmpty()){
             throw new NotFoundGroupException("코드와 일치하는 그룹을 찾을 수 없습니다.");
         }
         Group group = opGroup.get();
+        if(!group.getUserList().contains(user)){
+            throw new AccessPermissionException("접근권한이 없습니다. :유저가 해당그룹에 속해 있지않습니다.");
+        }
         List<User> findMembers= group.getUserList();
         List<UserInfoDTO> members = findMembers.stream()
                 .map(m-> new UserInfoDTO(m.getNickname(),m.getUsername()))

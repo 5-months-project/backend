@@ -32,7 +32,6 @@ public class ScheduleController {
     @PostMapping("/schedule")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ScheduleDTO> create(@Valid @RequestBody ScheduleCreateDTO scheduleCreateDTO, @AuthenticationPrincipal User user){
-        //todo 유저 입력받아야함
         return ResponseEntity.ok(scheduleService.create(scheduleCreateDTO,user));
     }
 
@@ -41,7 +40,6 @@ public class ScheduleController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ResultDTO> read(@PathVariable Long date,@AuthenticationPrincipal User user){
         ResultDTO<List> resultDTO = new ResultDTO<>(scheduleService.readByDate(user,date));
-        //todo 유저 입력받아야함
         return ResponseEntity.ok(resultDTO);
     }
 
@@ -49,7 +47,6 @@ public class ScheduleController {
     @PutMapping("/schedule")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ScheduleDTO> update(@Valid @RequestBody ScheduleModifyDTO scheduleModifyDTO,@AuthenticationPrincipal User user){
-        //todo 유저입력받아야함 권한확인
         return ResponseEntity.ok(scheduleService.modify(scheduleModifyDTO,user));
     }
 
@@ -57,7 +54,6 @@ public class ScheduleController {
     @DeleteMapping("/schedule/{schedulecode}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ScheduleDTO> delete(@PathVariable String schedulecode,@AuthenticationPrincipal User user){
-        //todo 유저입력받아야함, 권한확인
         return ResponseEntity.ok(scheduleService.delete(schedulecode,user));
     }
 
@@ -66,7 +62,6 @@ public class ScheduleController {
     @GetMapping("/schedules")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ResultDTO> readAll(@AuthenticationPrincipal User user){
-        //todo
         ResultDTO<List> resultDTO = new ResultDTO<>(scheduleService.readAll(user));
         return ResponseEntity.ok(resultDTO);
     }
@@ -77,41 +72,38 @@ public class ScheduleController {
     @PostMapping("/group-schedule/{group_code}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ScheduleDTO> group_create(@Valid @RequestBody ScheduleCreateDTO scheduleCreateDTO, @PathVariable String group_code,@AuthenticationPrincipal User user){
-        //todo
         return ResponseEntity.ok(scheduleService.group_create(scheduleCreateDTO,group_code,user));
     }
 
     /*그룹스케쥴-날짜별 조회*/
     @GetMapping("/group-schedule-date/{group_code}/{date}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ResultDTO> group_read(@PathVariable String group_code,@PathVariable Long date){
-        //todo
-        ResultDTO<List> resultDTO = new ResultDTO<>(scheduleService.group_readByDate(group_code,date));
+    public ResponseEntity<ResultDTO> group_read(@PathVariable String group_code,@PathVariable Long date,@AuthenticationPrincipal User user){
+        ResultDTO<List> resultDTO = new ResultDTO<>(scheduleService.group_readByDate(group_code,date,user));
         return ResponseEntity.ok(resultDTO);
     }
 
     /*그룹스케쥴-수정*/
-    @PutMapping("/group-schedule/{group_code}")
+    @PutMapping("/group-schedule")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ScheduleDTO> group_update(@PathVariable String group_code, @Valid @RequestBody ScheduleModifyDTO scheduleModifyDTO,@AuthenticationPrincipal User user){
-        //todo
-        return ResponseEntity.ok(scheduleService.group_modify(scheduleModifyDTO,group_code,user));
+    public ResponseEntity<ScheduleDTO> group_update(@Valid @RequestBody ScheduleModifyDTO scheduleModifyDTO,@AuthenticationPrincipal User user){
+        return ResponseEntity.ok(scheduleService.group_modify(scheduleModifyDTO,user));
     }
     /*그룹스케쥴-삭제*/
+    //todo 얘가 그룹에 속해있는지 체크
     @DeleteMapping("/group-schedule/{schedule_code}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ScheduleDTO> group_delete(@PathVariable String schedule_code){
-        //todo
-        return ResponseEntity.ok(scheduleService.group_delete(schedule_code));
+    public ResponseEntity<ScheduleDTO> group_delete(@PathVariable String schedule_code, @AuthenticationPrincipal User user){
+        return ResponseEntity.ok(scheduleService.group_delete(schedule_code,user));
     }
 
 
     /*그룹의 모든 스케쥴 가져오기 , DTO만들어서 하나처럼*/
+    //todo 얘가 그룹에 속해있는지 체크
     @GetMapping("/group-schedules/{group_code}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ResultDTO> group_readAll(@PathVariable String group_code){
-        //todo 접근권한확인
-        ResultDTO<List> resultDTO = new ResultDTO<>(scheduleService.group_readAll(group_code));
+    public ResponseEntity<ResultDTO> group_readAll(@PathVariable String group_code,@AuthenticationPrincipal User user){
+        ResultDTO<List> resultDTO = new ResultDTO<>(scheduleService.group_readAll(group_code,user));
         return ResponseEntity.ok(resultDTO);
     }
 
@@ -119,9 +111,10 @@ public class ScheduleController {
     /*코드로 일정 가져오기(개인,그룹 상관X) , DTO 만들어서 하나의 일정처럼 보이게 내보내기*/
     @GetMapping("/schedule/{schedule_code}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ScheduleDTO> group_read(@PathVariable String schedule_code){
-        //todo 권한체크: 그룹id가 0이면 크레이터랑 유저가 일치하는지, 그룹id로 그룹찾고 그 그룹이 user의 리스트에 있는지 체크
-        return ResponseEntity.ok(scheduleService.readByCode(schedule_code));
+    public ResponseEntity<ScheduleDTO> group_read(@PathVariable String schedule_code,@AuthenticationPrincipal User user){
+        return ResponseEntity.ok(scheduleService.readByCode(schedule_code,user));
     }
 
+
+    /*admin 접근 컨트롤러도 만들기*/
 }

@@ -50,11 +50,10 @@ public class GroupController {
     }
 
     /*그룹의 멤버조회*/
-    //그룹조회권한 확인추가해야함
     @GetMapping("/groups/{groupcode}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ResultDTO> groupMembers(@PathVariable String groupcode){
-        List<UserInfoDTO> members = groupService.findMembers(groupcode);
+    public ResponseEntity<ResultDTO> groupMembers(@PathVariable String groupcode ,@AuthenticationPrincipal User user){
+        List<UserInfoDTO> members = groupService.findMembers(groupcode,user);
         ResultDTO<List> resultDto = new ResultDTO<>(members);
         return ResponseEntity.ok(resultDto);
     }
