@@ -40,7 +40,7 @@ public class GroupService {
             그룹생성
         */
 
-    public Group createGroup(GroupCreateDTO groupCreateDTO){
+    public Group createGroup(GroupCreateDTO groupCreateDTO,User user){
         Group group =new Group();
         group.setName(groupCreateDTO.getGroupname());
         group.setPassword(passwordEncoder.encode(groupCreateDTO.getPassword()));
@@ -48,7 +48,6 @@ public class GroupService {
         while (validDuplicateMember(group)){
             group.setCode(codeCreate());
         }
-        groupRepository.save(group);
         return group;
 
 

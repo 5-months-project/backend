@@ -11,8 +11,6 @@ import java.util.Optional;
 public interface ScheduleRepository extends JpaRepository<Schedule,Long> {
 
     List<Schedule> findAllByCreatorAndDateAndGroupcode(String username, Long date, String groupcode);
-    Optional<Schedule> findOneByScheduleCode(String schedule_code);
-
 
     List<Schedule> findAllByScheduleCode(String schedule_code);
     List<Schedule> findAllByDateAndGroupcode(Long date, String groupcode);

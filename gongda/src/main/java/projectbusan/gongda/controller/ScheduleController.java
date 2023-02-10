@@ -10,6 +10,7 @@ import projectbusan.gongda.dto.ScheduleCreateDTO;
 import projectbusan.gongda.dto.ScheduleDTO;
 import projectbusan.gongda.dto.ScheduleModifyDTO;
 import projectbusan.gongda.entity.User;
+import projectbusan.gongda.repository.UserRepository;
 import projectbusan.gongda.service.ScheduleService;
 
 import javax.validation.Valid;
@@ -20,6 +21,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class ScheduleController {
     private final ScheduleService scheduleService;
+//    private final UserRepository userRepository;
 
     @Autowired
     public ScheduleController(ScheduleService scheduleService) {
@@ -32,13 +34,17 @@ public class ScheduleController {
     @PostMapping("/schedule")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ScheduleDTO> create(@Valid @RequestBody ScheduleCreateDTO scheduleCreateDTO, @AuthenticationPrincipal User user){
-        return ResponseEntity.ok(scheduleService.create(scheduleCreateDTO,user));
+       // User testuser =userRepository.findOneWithAuthoritiesByUsername("admin").get();
+       // return ResponseEntity.ok(scheduleService.create(scheduleCreateDTO,testuser,ScheduleService.codeCreate()));
+        return ResponseEntity.ok(scheduleService.create(scheduleCreateDTO,user,ScheduleService.codeCreate()));
     }
 
     /*개인스케쥴-날짜별조회*/
     @GetMapping("/schedule-date/{date}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ResultDTO> read(@PathVariable Long date,@AuthenticationPrincipal User user){
+        //  User testuser =userRepository.findOneWithAuthoritiesByUsername("admin").get();
+        //  ResultDTO<List> resultDTO = new ResultDTO<>(scheduleService.readByDate(testuser,date));
         ResultDTO<List> resultDTO = new ResultDTO<>(scheduleService.readByDate(user,date));
         return ResponseEntity.ok(resultDTO);
     }
@@ -47,6 +53,8 @@ public class ScheduleController {
     @PutMapping("/schedule")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ScheduleDTO> update(@Valid @RequestBody ScheduleModifyDTO scheduleModifyDTO,@AuthenticationPrincipal User user){
+        //  User testuser =userRepository.findOneWithAuthoritiesByUsername("admin").get();
+        //  return ResponseEntity.ok(scheduleService.modify(scheduleModifyDTO,testuser));
         return ResponseEntity.ok(scheduleService.modify(scheduleModifyDTO,user));
     }
 
@@ -54,6 +62,8 @@ public class ScheduleController {
     @DeleteMapping("/schedule/{schedulecode}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ScheduleDTO> delete(@PathVariable String schedulecode,@AuthenticationPrincipal User user){
+        //  User testuser =userRepository.findOneWithAuthoritiesByUsername("admin").get();
+        //  return ResponseEntity.ok(scheduleService.delete(schedulecode,testuser));
         return ResponseEntity.ok(scheduleService.delete(schedulecode,user));
     }
 
@@ -62,6 +72,8 @@ public class ScheduleController {
     @GetMapping("/schedules")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ResultDTO> readAll(@AuthenticationPrincipal User user){
+        //  User testuser =userRepository.findOneWithAuthoritiesByUsername("admin").get();
+        //  ResultDTO<List> resultDTO = new ResultDTO<>(scheduleService.readAll(testuser));
         ResultDTO<List> resultDTO = new ResultDTO<>(scheduleService.readAll(user));
         return ResponseEntity.ok(resultDTO);
     }
@@ -72,13 +84,17 @@ public class ScheduleController {
     @PostMapping("/group-schedule/{group_code}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ScheduleDTO> group_create(@Valid @RequestBody ScheduleCreateDTO scheduleCreateDTO, @PathVariable String group_code,@AuthenticationPrincipal User user){
-        return ResponseEntity.ok(scheduleService.group_create(scheduleCreateDTO,group_code,user));
+        //  User testuser =userRepository.findOneWithAuthoritiesByUsername("admin").get();
+        // return ResponseEntity.ok(scheduleService.group_create(scheduleCreateDTO,group_code,testuser,ScheduleService.codeCreate()));
+        return ResponseEntity.ok(scheduleService.group_create(scheduleCreateDTO,group_code,user,ScheduleService.codeCreate()));
     }
 
     /*그룹스케쥴-날짜별 조회*/
     @GetMapping("/group-schedule-date/{group_code}/{date}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ResultDTO> group_read(@PathVariable String group_code,@PathVariable Long date,@AuthenticationPrincipal User user){
+        //  User testuser =userRepository.findOneWithAuthoritiesByUsername("admin").get();
+        // ResultDTO<List> resultDTO = new ResultDTO<>(scheduleService.group_readByDate(group_code,date,testuser));
         ResultDTO<List> resultDTO = new ResultDTO<>(scheduleService.group_readByDate(group_code,date,user));
         return ResponseEntity.ok(resultDTO);
     }
@@ -87,6 +103,8 @@ public class ScheduleController {
     @PutMapping("/group-schedule")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ScheduleDTO> group_update(@Valid @RequestBody ScheduleModifyDTO scheduleModifyDTO,@AuthenticationPrincipal User user){
+        //  User testuser =userRepository.findOneWithAuthoritiesByUsername("admin").get();
+        //  return ResponseEntity.ok(scheduleService.group_modify(scheduleModifyDTO,testuser));
         return ResponseEntity.ok(scheduleService.group_modify(scheduleModifyDTO,user));
     }
     /*그룹스케쥴-삭제*/
@@ -94,6 +112,8 @@ public class ScheduleController {
     @DeleteMapping("/group-schedule/{schedule_code}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ScheduleDTO> group_delete(@PathVariable String schedule_code, @AuthenticationPrincipal User user){
+        //  User testuser =userRepository.findOneWithAuthoritiesByUsername("admin").get();
+        //  return ResponseEntity.ok(scheduleService.group_delete(schedule_code,testuser));
         return ResponseEntity.ok(scheduleService.group_delete(schedule_code,user));
     }
 
@@ -103,6 +123,8 @@ public class ScheduleController {
     @GetMapping("/group-schedules/{group_code}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ResultDTO> group_readAll(@PathVariable String group_code,@AuthenticationPrincipal User user){
+        // User testuser =userRepository.findOneWithAuthoritiesByUsername("admin").get();
+        // ResultDTO<List> resultDTO = new ResultDTO<>(scheduleService.group_readAll(group_code,testuser));
         ResultDTO<List> resultDTO = new ResultDTO<>(scheduleService.group_readAll(group_code,user));
         return ResponseEntity.ok(resultDTO);
     }
@@ -112,9 +134,8 @@ public class ScheduleController {
     @GetMapping("/schedule/{schedule_code}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ScheduleDTO> group_read(@PathVariable String schedule_code,@AuthenticationPrincipal User user){
+        // User testuser =userRepository.findOneWithAuthoritiesByUsername("admin").get();
+        // return ResponseEntity.ok(scheduleService.readByCode(schedule_code,testuser));
         return ResponseEntity.ok(scheduleService.readByCode(schedule_code,user));
     }
-
-
-    /*admin 접근 컨트롤러도 만들기*/
 }

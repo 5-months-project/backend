@@ -35,7 +35,7 @@ public class User extends BaseTimeStamp {
     @Column(name = "user_activated", nullable = false)
     private boolean activated;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_group_tbl",
             joinColumns = @JoinColumn(name = "user_idx"),
@@ -65,11 +65,13 @@ public class User extends BaseTimeStamp {
     }
 
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Schedule> schedules = new ArrayList<>();
 
     public void addSchedule(Schedule schedule){
-        if (!this.getSchedules().contains(schedule)) this.getSchedules().add(schedule);
+        if (!this.getSchedules().contains(schedule)) {
+            this.getSchedules().add(schedule);
+        }
     }
 
     public void deleteSchedule(Schedule schedule){

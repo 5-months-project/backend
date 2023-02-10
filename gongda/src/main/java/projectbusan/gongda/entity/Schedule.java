@@ -50,13 +50,6 @@ public class Schedule extends BaseTimeStamp {
 
 
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "group_id")
-    private Group group;
 
 
 

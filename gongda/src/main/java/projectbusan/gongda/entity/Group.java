@@ -31,10 +31,11 @@ public class Group extends BaseTimeStamp{
     private String password;
 
     @Builder.Default
-    @ManyToMany(mappedBy = "groupList")
+    @ManyToMany(mappedBy = "groupList" ,cascade = CascadeType.ALL)
     private List<User> userList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+
     private List<Schedule> schedules = new ArrayList<>();
 
     public void addSchedule(Schedule schedule){
