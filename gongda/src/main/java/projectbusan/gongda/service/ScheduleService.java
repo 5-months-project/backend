@@ -162,7 +162,7 @@ public class ScheduleService {
 
         for(Long i=start;i<=end;i++) {
             Schedule schedule = Schedule.builder()
-                    .creator(user.getId())
+                    .creator(scheduleCreateDTO.getCreator_id())
                     .content(scheduleCreateDTO.getContent())
                     .groupid(0L)
                     .modifier(user.getId())
@@ -179,7 +179,7 @@ public class ScheduleService {
                 .content(scheduleCreateDTO.getContent())
                 .name(scheduleCreateDTO.getName())
                 .category(scheduleCreateDTO.getCategory())
-                .creator_id(user.getId())
+                .creator_id(scheduleCreateDTO.getCreator_id())
                 .modifier_id(user.getId())
                 .group_id(0L)
                 .time_end(scheduleCreateDTO.getTime_end())
@@ -220,7 +220,7 @@ public class ScheduleService {
                 .content(scheduleCreateDTO.getContent())
                 .name(scheduleCreateDTO.getName())
                 .category(scheduleCreateDTO.getCategory())
-                .creator_id(user.getId())
+                .creator_id(scheduleCreateDTO.getCreator_id())
                 .modifier_id(user.getId())
                 .group_id(group.getId())
                 .time_end(scheduleCreateDTO.getTime_end())
