@@ -12,4 +12,6 @@ public class ScheduleModifyDTO {
     private String name;
     private String content;
     private String category;
+    private Long time_start;
+    private Long time_end;
 }

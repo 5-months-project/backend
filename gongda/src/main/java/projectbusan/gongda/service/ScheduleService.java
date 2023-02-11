@@ -434,8 +434,8 @@ public class ScheduleService {
                 .name(scheduleModifyDTO.getName())
                 .content(scheduleModifyDTO.getContent())
                 .category(scheduleModifyDTO.getCategory())
-                .time_start(schedule.getTimeStart())
-                .time_end(schedule.getTimeEnd())
+                .time_start(scheduleModifyDTO.getTime_start())
+                .time_end(scheduleModifyDTO.getTime_end())
                 .creator_email(schedule.getCreator())
                 .build();
         return create(scheduleCreateDTO,user, schedule.getScheduleCode());
@@ -463,8 +463,8 @@ public class ScheduleService {
                 .name(scheduleModifyDTO.getName())
                 .content(scheduleModifyDTO.getContent())
                 .category(scheduleModifyDTO.getCategory())
-                .time_start(schedule.getTimeStart())
-                .time_end(schedule.getTimeEnd())
+                .time_start(scheduleModifyDTO.getTime_start())
+                .time_end(scheduleModifyDTO.getTime_end())
                 .creator_email(schedule.getCreator())
                 .build();
         return group_create(scheduleCreateDTO,group.getCode(),user,schedule.getScheduleCode());
