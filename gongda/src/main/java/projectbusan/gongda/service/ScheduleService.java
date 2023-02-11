@@ -1,7 +1,6 @@
 package projectbusan.gongda.service;
 
 import jakarta.transaction.Transactional;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import projectbusan.gongda.dto.ScheduleCreateDTO;
 import projectbusan.gongda.dto.ScheduleDTO;
@@ -16,11 +15,7 @@ import projectbusan.gongda.exception.NotFoundScheduleException;
 import projectbusan.gongda.repository.GroupRepository;
 import projectbusan.gongda.repository.ScheduleRepository;
 import projectbusan.gongda.repository.UserRepository;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Service
 @Transactional
@@ -65,6 +60,116 @@ public class ScheduleService {
         }
         return scheduleDTOS;
     }
+
+    public List<ScheduleDTO> allReadByDate(User user, Long date) {
+        List<Schedule> schedules = scheduleRepository.findAllByCreatorAndDateAndGroupcode(user.getUsername(), date, "0");
+        List<ScheduleDTO> scheduleDTOS = new ArrayList<>();
+        List<Group> groups = user.getGroupList();
+        for (Group g : groups){
+            List<Schedule> groupSchedules = scheduleRepository.findAllByDateAndGroupcode(date, g.getCode());
+            schedules.addAll(groupSchedules);
+        }
+        Collections.sort(schedules, (a, b) -> Math.toIntExact(b.getDate() - a.getDate()));
+        for (Schedule schedule : schedules) {
+            Optional<User> opCreator = userRepository.findOneWithAuthoritiesByUsername(schedule.getCreator());
+            if(opCreator.isEmpty()) throw new NotFoundMemberException("이메일과 일치하는 유저를 찾지 못했습니다.");
+            User creator= opCreator.get();
+            if (!creator.getId().equals(user.getId())){
+                throw new AccessPermissionException("접근권한이 없습니다. :해당유저의 일정이 아닙니다.");
+            }
+            ScheduleDTO scheduleDTO = ScheduleDTO.builder()
+                    .content(schedule.getContent())
+                    .name(schedule.getName())
+                    .category(schedule.getCategory())
+                    .creator_nickname(creator.getNickname())
+                    .modifier_nickname(creator.getNickname())
+                    .group_code(schedule.getGroupcode())
+                    .time_end(schedule.getTimeEnd())
+                    .time_start(schedule.getTimeStart())
+                    .schedule_code(schedule.getScheduleCode())
+                    .build();
+            scheduleDTOS.add(scheduleDTO);
+        }
+        return scheduleDTOS;
+    }
+
+    public List<ScheduleDTO> readByMonth(User user, Long month) {
+        //20220202
+        Long monthstart=(month/100)*100;
+        Long monthend=monthstart+100;
+        List<Schedule> schedules = scheduleRepository.findAllByDateBetweenAndCreatorAndGroupcode(monthstart,monthend,user.getUsername(),"0");
+        List<Group> groups = user.getGroupList();
+        for (Group g : groups){
+            List<Schedule> groupSchedules = scheduleRepository.findAllByDateBetweenAndGroupcode(monthstart,monthend,g.getCode());
+            schedules.addAll(groupSchedules);
+        }
+
+        Collections.sort(schedules, (a, b) -> Math.toIntExact(b.getDate() - a.getDate()));
+
+        List<ScheduleDTO> scheduleDTOS = new ArrayList<>();
+        for (Schedule schedule : schedules) {
+            Optional<User> opCreator = userRepository.findOneWithAuthoritiesByUsername(schedule.getCreator());
+            if(opCreator.isEmpty()) throw new NotFoundMemberException("이메일과 일치하는 유저를 찾지 못했습니다.");
+            User creator= opCreator.get();
+            if (!creator.getId().equals(user.getId())){
+                throw new AccessPermissionException("접근권한이 없습니다. :해당유저의 일정이 아닙니다.");
+            }
+            ScheduleDTO scheduleDTO = ScheduleDTO.builder()
+                    .content(schedule.getContent())
+                    .name(schedule.getName())
+                    .category(schedule.getCategory())
+                    .creator_nickname(creator.getNickname())
+                    .modifier_nickname(creator.getNickname())
+                    .group_code(schedule.getGroupcode())
+                    .time_end(schedule.getTimeEnd())
+                    .time_start(schedule.getTimeStart())
+                    .schedule_code(schedule.getScheduleCode())
+                    .build();
+            scheduleDTOS.add(scheduleDTO);
+        }
+        return scheduleDTOS;
+    }
+
+
+
+    public List<ScheduleDTO> commingSchedule(User user, Long date) {
+        //20220202
+
+        List<Schedule> schedules = scheduleRepository.findAllByDateAfterAndCreatorAndGroupcode(date,user.getUsername(),"0");
+
+        List<Group> groups = user.getGroupList();
+        for (Group g : groups){
+            List<Schedule> groupSchedules = scheduleRepository.findAllByDateAfterAndGroupcode(date,g.getCode());
+            schedules.addAll(groupSchedules);
+        }
+
+        Collections.sort(schedules, (a, b) -> Math.toIntExact(b.getDate() - a.getDate()));
+
+        List<ScheduleDTO> scheduleDTOS = new ArrayList<>();
+        for (Schedule schedule : schedules) {
+            Optional<User> opCreator = userRepository.findOneWithAuthoritiesByUsername(schedule.getCreator());
+            if(opCreator.isEmpty()) throw new NotFoundMemberException("이메일과 일치하는 유저를 찾지 못했습니다.");
+            User creator= opCreator.get();
+            if (!creator.getId().equals(user.getId())){
+                throw new AccessPermissionException("접근권한이 없습니다. :해당유저의 일정이 아닙니다.");
+            }
+            ScheduleDTO scheduleDTO = ScheduleDTO.builder()
+                    .content(schedule.getContent())
+                    .name(schedule.getName())
+                    .category(schedule.getCategory())
+                    .creator_nickname(creator.getNickname())
+                    .modifier_nickname(creator.getNickname())
+                    .group_code(schedule.getGroupcode())
+                    .time_end(schedule.getTimeEnd())
+                    .time_start(schedule.getTimeStart())
+                    .schedule_code(schedule.getScheduleCode())
+                    .build();
+            scheduleDTOS.add(scheduleDTO);
+        }
+        return scheduleDTOS;
+    }
+
+
 
     public List<ScheduleDTO> group_readByDate(String group_code, Long date,User user) {
         Optional<Group> opGroup = groupRepository.findOneByCode(group_code);
